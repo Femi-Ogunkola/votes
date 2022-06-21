@@ -20,7 +20,6 @@ async def add_user_data(user: UserSchema = Body(...)):
     new_user = await add_user(user)
     return ResponseModel(new_user, "user added successfully.")
 
-
 @router.get("/", response_description="users retrieved")
 async def get_users():
     users = await retrieve_users()

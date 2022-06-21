@@ -33,7 +33,8 @@ def poll_helper(poll) -> dict:
         "description": poll["description"],
         "createdDate": poll["createdDate"],
         "updatedDate": poll["updatedDate"],
-        "type": poll["type"],
+        "length": poll["length"],
+        "options": poll["options"]
     }
 
 
@@ -61,6 +62,11 @@ async def add_poll(poll_data: dict) -> dict:
     createdDate = datetime.datetime.now()
     poll_data['createdDate'] = createdDate
     poll_data['updatedDate'] = createdDate
+    count = poll_data['length']
+    while count > 0:
+        poll_data['options'][f'option {count}'] = 0
+        count -= 1
+
     poll = await poll_collection.insert_one(poll_data)
     new_poll = await poll_collection.find_one({"_id": poll.inserted_id})
     return poll_helper(new_poll)
