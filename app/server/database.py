@@ -33,7 +33,8 @@ def poll_helper(poll) -> dict:
         "description": poll["description"],
         "createdDate": poll["createdDate"],
         "updatedDate": poll["updatedDate"],
-        "type": poll["type"],
+        "length": poll["length"],
+        "options": poll["options"]
     }
 
 
@@ -61,6 +62,10 @@ async def add_poll(poll_data: dict) -> dict:
     createdDate = datetime.datetime.now()
     poll_data['createdDate'] = createdDate
     poll_data['updatedDate'] = createdDate
+    count = poll_data['length']
+    while count > 0:
+        poll_data['options'][f'option {count}'] = 0
+        count -= 1
     poll = await poll_collection.insert_one(poll_data)
     new_poll = await poll_collection.find_one({"_id": poll.inserted_id})
     return poll_helper(new_poll)
@@ -96,13 +101,29 @@ async def update_poll(id: str, data: dict):
     if len(data) < 1:
         return False
     poll = await poll_collection.find_one({"_id": ObjectId(id)})
-    print(poll)
     if poll:
         data['updatedDate'] = datetime.datetime.now()
-        print(data)
         updated_poll = await poll_collection.update_one(
             {"_id": ObjectId(id)}, {"$set": data}
         )
+        if updated_poll:
+            return True
+        return False
+
+async def update_poll_option_name(id: str, data: list):
+    if len(data) < 1:
+        return False
+    poll = await poll_collection.find_one({"_id": ObjectId(id)})
+    if poll:
+        data['updatedDate'] = datetime.datetime.now()
+        count = poll['length']
+        print(data,count)
+        while count > 0:
+            updated_poll = await poll_collection.update_one(
+                {"_id": ObjectId(id)},
+                {"$rename": {f'options.option {count}': f"options.{data['optionNames'][count-1]}"}}
+            )
+            count -= 1
         if updated_poll:
             return True
         return False
@@ -111,7 +132,6 @@ async def vote_poll(id: str, data: dict):
     poll = await poll_collection.find_one({"_id": ObjectId(id)})
     if poll:
         #data['updatedDate'] = datetime.datetime.now()
-        print(f"${data['vote']}")
         updated_poll = await poll_collection.update_one(
             {"_id": ObjectId(id)}, {"$inc": {f"option.{data['vote']}":1}}
         )

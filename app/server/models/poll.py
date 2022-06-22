@@ -9,9 +9,8 @@ from pydantic import Field
 class PollSchema(BaseModel):
     title: str = Field(...)
     description: str = Field(...)
-    style: str = Field(...)
-    #createdDate: datetime.datetime = Field(...)
-    #updatedDate: datetime.datetime = Field(...)
+    length: int = Field(..., gt=0 , lte= 4)
+    options: dict = Field(...)
 
 
     class Config:
@@ -19,26 +18,29 @@ class PollSchema(BaseModel):
             "example": {
                 "title": "John Doe",
                 "description": "Water resources and environmental engineering",
-                "style": 'rank',
+                "length": 4,
                 "createdDate": datetime.datetime.now(),
                 "updatedDate": datetime.datetime.now(),
+                "options": {'option': 1}
             }
         }
 class UpdatePollModel(BaseModel):
     title: Optional[str]
     description: Optional[str]
-    style: Optional[str]
+    length: Optional[int]
     createdDate: Optional[datetime.datetime]
     updatedDate: datetime.datetime = Field(...)
+    options: Optional[dict]
 
     class Config:
         schema_extra = {
             "example": {
                 "title": "John Doe",
                 "description": "water resources and environmental engineering",
-                "style": 'options',
+                "length": 3,
                 "createdDate": datetime.datetime.now(),
                 "updatedDate": datetime.datetime.now(),
+                "options": {'option': 1}
             }
         }
 

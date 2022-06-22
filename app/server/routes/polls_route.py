@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi import Body
 from fastapi.encoders import jsonable_encoder
+from server.database import update_poll_option_name
 from server.database import vote_poll
 
 from server.database import add_poll
@@ -51,9 +52,9 @@ async def update_poll_data(id: str, req: UpdatePollModel = Body(...)):
         "There was an error updating the poll data.",
     )
 
-@router.put("/id/{id}/create-option")
-async def update_poll_option(id: str, option: dict = Body(...)):
-    updated_poll = await update_poll(id, {"option": option})
+@router.put("/id/{id}/update-option-name")
+async def update_poll_option(id: str, optionName: list = Body(...)):
+    updated_poll = await update_poll_option_name(id, {"optionNames": optionName})
     if updated_poll:
         return ResponseModel(
             "poll with ID: {} option update is successful".format(id),
