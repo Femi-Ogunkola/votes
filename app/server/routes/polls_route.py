@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi import Body
 from fastapi.encoders import jsonable_encoder
+from server.database import delete_poll_option
 from server.database import update_poll_option_name
 from server.database import vote_poll
 
@@ -66,13 +67,27 @@ async def update_poll_option(id: str, optionName: list = Body(...)):
         "There was an error updating the poll data.",
     )
 
-@router.put("/id/{id}/vote")
-async def vote_poll_option(id: str, option: str = Body(...)):
-    # option = f'option.{option}'
-    updated_poll = await vote_poll(id, {"vote": option})
+@router.put("/id/{id}/delete-option")
+async def update_poll_option(id: str, optionName: str = Body(...)):
+    updated_poll = await delete_poll_option(id, optionName)
     if updated_poll:
         return ResponseModel(
-            "poll with ID: {} vote update is successful".format(id),
+            "poll with ID: {} option update is successful".format(id),
+            "poll option updated successfully",
+        )
+    return ErrorResponseModel(
+        "An error occurred",
+        404,
+        "There was an error updating the poll data.",
+    )
+
+@router.put("/{userId}/id/{pollId}/vote")
+async def vote_poll_option(pollId: str, userId: str, option: str = Body(...)):
+    # option = f'option.{option}'
+    voted_poll = await vote_poll(pollId, userId,{"vote": option})
+    if voted_poll:
+        return ResponseModel(
+            f"poll with ID: {pollId} vote update is successful",
             "poll vote updated successfully",
         )
     return ErrorResponseModel(

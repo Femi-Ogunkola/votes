@@ -11,6 +11,7 @@ class PollSchema(BaseModel):
     description: str = Field(...)
     length: int = Field(..., gt=0 , lte= 4)
     options: dict = Field(...)
+    numberOfVoters: int = Field(..., gt=1)
 
 
     class Config:
@@ -21,7 +22,9 @@ class PollSchema(BaseModel):
                 "length": 4,
                 "createdDate": datetime.datetime.now(),
                 "updatedDate": datetime.datetime.now(),
-                "options": {'option': 1}
+                "options": {"options 1": 1},
+                "numberOfVoters": 3
+
             }
         }
 class UpdatePollModel(BaseModel):
@@ -31,6 +34,7 @@ class UpdatePollModel(BaseModel):
     createdDate: Optional[datetime.datetime]
     updatedDate: datetime.datetime = Field(...)
     options: Optional[dict]
+    numberOfVoters: Optional[int]
 
     class Config:
         schema_extra = {
@@ -40,7 +44,9 @@ class UpdatePollModel(BaseModel):
                 "length": 3,
                 "createdDate": datetime.datetime.now(),
                 "updatedDate": datetime.datetime.now(),
-                "options": {'option': 1}
+                "numberOfVoters": 3,
+                "options": {"options 1": 1},
+                "numberOfVoters": 3,
             }
         }
 

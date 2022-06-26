@@ -2,6 +2,7 @@ import datetime
 
 import motor.motor_asyncio
 from bson.objectid import ObjectId
+import bcrypt
 
 MONGO_DETAILS = "mongodb://localhost:27017"
 
@@ -54,6 +55,10 @@ async def retrieve_polls():
 
 # Add a new user into to the database
 async def add_user(user_data: dict) -> dict:
+    user = await user_collection.find_one({"email": user_data['email']})
+    if user:
+        return "USER ALREADY IN DB"
+    user_data['password'] = bcrypt.hashpw(user_data['password'].encode('utf-8'), bcrypt.gensalt())
     user = await user_collection.insert_one(user_data)
     new_user = await user_collection.find_one({"_id": user.inserted_id})
     return user_helper(new_user)
@@ -128,17 +133,31 @@ async def update_poll_option_name(id: str, data: list):
             return True
         return False
     
-async def vote_poll(id: str, data: dict):
+async def vote_poll(id: str, userId, data: dict):
     poll = await poll_collection.find_one({"_id": ObjectId(id)})
     if poll:
-        #data['updatedDate'] = datetime.datetime.now()
         updated_poll = await poll_collection.update_one(
-            {"_id": ObjectId(id)}, {"$inc": {f"option.{data['vote']}":1}}
+            {"_id": ObjectId(id)},
+            {"$inc": {f"options.{data['vote']}":1}}, 
+        )
+        updated_poll = await poll_collection.update_one(
+            {"_id": ObjectId(id)},
+            {"$push": { "voters": f"{userId}" } }, 
         )
         if updated_poll:
             return True
         return False
 
+async def delete_poll_option(id, data):
+    poll = await poll_collection.find_one({"_id": ObjectId(id)})
+    if poll:
+        updated_poll = await poll_collection.update_one(
+            {"_id": ObjectId(id)},
+            {"$unset": {f"options.{data}": ""}}
+        )
+        if updated_poll:
+            return True
+        return False
 
 # Delete a user from the database
 async def delete_user(id: str):
