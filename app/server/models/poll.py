@@ -23,7 +23,8 @@ class PollSchema(BaseModel):
                 "createdDate": datetime.datetime.now(),
                 "updatedDate": datetime.datetime.now(),
                 "options": {"options 1": 1},
-                "numberOfVoters": 3
+                "numberOfVoters": 3,
+                "voters": []
 
             }
         }
@@ -47,6 +48,7 @@ class UpdatePollModel(BaseModel):
                 "numberOfVoters": 3,
                 "options": {"options 1": 1},
                 "numberOfVoters": 3,
+                "voters": []
             }
         }
 

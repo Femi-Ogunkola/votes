@@ -135,6 +135,8 @@ async def update_poll_option_name(id: str, data: list):
     
 async def vote_poll(id: str, userId, data: dict):
     poll = await poll_collection.find_one({"_id": ObjectId(id)})
+    if userId in poll.get("voters"):
+        return False
     if poll:
         updated_poll = await poll_collection.update_one(
             {"_id": ObjectId(id)},

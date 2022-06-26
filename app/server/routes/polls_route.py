@@ -82,9 +82,9 @@ async def update_poll_option(id: str, optionName: str = Body(...)):
     )
 
 @router.put("/{userId}/id/{pollId}/vote")
-async def vote_poll_option(pollId: str, userId: str, option: str = Body(...)):
-    # option = f'option.{option}'
-    voted_poll = await vote_poll(pollId, userId,{"vote": option})
+async def vote_poll_option(pollId: str, userId: str, vote: list = Body(...)):
+    option, amount = vote[0], vote[1]
+    voted_poll = await vote_poll(pollId, userId,{"vote": option, "weight": amount})
     if voted_poll:
         return ResponseModel(
             f"poll with ID: {pollId} vote update is successful",
