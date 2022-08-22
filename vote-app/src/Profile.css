@@ -1,0 +1,48 @@
+.App {
+    text-align: center;
+}
+
+.Name {
+    text-align: center;
+    font-style: italic;
+    font-size: 40px;
+    border: solid red;
+}
+
+.date {
+    text-align: center;
+    font-style: italic;
+    font-size: 16px;
+
+}
+
+.App-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.card {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-gap: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    max-width: 300px;
+    margin: 10px;
+    font-size: 24px;
+}
+
+.card-field {
+    text-align: start;
+    margin: 5px;
+    /* border: solid #000; */
+
+}
+
+.card-value {
+    margin: 5px;
+    text-align: center;
+    /* border: solid #000;
+    border-width: 0 1px; */
+}
